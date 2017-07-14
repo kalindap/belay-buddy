@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace="fragments :: head"></head>
+
+<body class="container">
+<h1 th:text="${title}">Default Title</h1>
+<nav th:replace="fragments :: navigation"></nav>
+
+<table class="table">
+
+    <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+    </tr>
+
+    <tr th:each="climber : ${climbers}">
+        <td th:text="${climber.firstName}"></td>
+        <td th:text="${climber.lastName}"></td>
+    </tr>
+
+</table>
+
+<a href="/search/filter">Filter</a>
+
+
+</body>
+</html>
