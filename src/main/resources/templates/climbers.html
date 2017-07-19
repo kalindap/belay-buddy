@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace="fragments :: head"></head>
+
+<body class="container">
+<h1 th:text="${title}">Default Title</h1>
+<nav th:replace="fragments :: navigation"></nav>
+
+<table class="table"  th:each="climber : ${climbers}">
+
+    <tr><td><strong>Name: </strong></td><td th:text="${climber.firstName} + ' ' + ${climber.lastName}"></td></tr>
+    <tr><td><strong>Age: </strong></td><td th:text="${climber.age}"></td></tr>
+    <tr><td><strong>Climbing Styles: </strong></td>
+        <td>
+        <span th:each="climbingType : ${climber.climbingTypes}">
+        <span th:text="${climbingType} + ', '"></span></span>
+        </td>
+    </tr>
+
+</table>
+
+<a href="/climbers/filter">Filter</a>
+
+
+</body>
+</html>

@@ -9,7 +9,11 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import javax.validation.Valid;
+import java.util.ArrayList;
+
 
 /**
  * Created by kalindapiper on 7/12/17.
@@ -22,30 +26,42 @@ public class ClimberController {
 
     public ClimberController() {}
 
+    private ArrayList<Integer> possibleAges = new ArrayList<>();
+
     @RequestMapping(value = "register", method = RequestMethod.GET)
     public String displayRegisterForm(Model model) {
+
+        if (possibleAges.isEmpty()) {
+            for (int i = 18; i < 80; i++) {
+                possibleAges.add(i);
+            }
+        }
+
         model.addAttribute("title", "Register");
+        model.addAttribute("possibleAges", possibleAges);
         model.addAttribute(new Climber());
         return "/register";
     }
 
     @RequestMapping(value = "register", method = RequestMethod.POST)
     public String processRegisterForm(@ModelAttribute @Valid Climber newClimber,
-                                       Errors errors, Model model) {
+                                       Errors errors, @RequestParam ArrayList climbingType, Model model) {
 
         if (errors.hasErrors()) {
             model.addAttribute("title", "Register");
+            model.addAttribute("possibleAges", possibleAges);
             return "/register";
         }
 
+        newClimber.setClimbingTypes(climbingType);
         climberDao.save(newClimber);
-        return "redirect:search";
+        return "redirect:climbers";
     }
 
-    @RequestMapping(value = "search", method = RequestMethod.GET)
-    public String processSearchForm(Model model) {
-        model.addAttribute("title", "Search");
+    @RequestMapping(value = "climbers", method = RequestMethod.GET)
+    public String displayClimbersForm(Model model) {
+        model.addAttribute("title", "Climbers");
         model.addAttribute("climbers", climberDao.findAll());
-        return "/search";
+        return "/climbers";
     }
 }
