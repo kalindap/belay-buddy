@@ -6,6 +6,8 @@
 <h1 th:text="${title}">Default Title</h1>
 <nav th:replace="fragments :: navigation"></nav>
 
+<nav th:replace="fragments :: welcome"></nav>
+
 <table class="table"  th:each="climber : ${climbers}">
 
     <tr><td><strong>Name: </strong></td><td th:text="${climber.firstName} + ' ' + ${climber.lastName}"></td></tr>
@@ -19,7 +21,8 @@
 
 </table>
 
-<a href="/climbers/filter">Filter</a>
+<a href="/climbers/filter" class="btn btn-primary">Filter</a>
+
 
 
 </body>

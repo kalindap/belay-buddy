@@ -11,10 +11,15 @@
 <body>
 
 <nav th:fragment="navigation" >
-    <a href="/">Home</a> |
+    <a href="/calendar">Calendar</a> |
     <a href="/climbers">Climbers</a> |
-    <a href="/register">Register</a> |
-    <a href="/login">Log In</a>
+    <a href="/profile">Profile</a>
+</nav>
+
+<nav th:fragment="welcome" th:inline="text"> Hello [[${#httpServletRequest.remoteUser}]]!
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Sign Out"/>
+    </form>
 </nav>
 
 </body>
