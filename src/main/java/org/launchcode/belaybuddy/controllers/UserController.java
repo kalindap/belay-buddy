@@ -1,7 +1,8 @@
 package org.launchcode.belaybuddy.controllers;
 
-import org.launchcode.belaybuddy.models.Climber;
-import org.launchcode.belaybuddy.models.data.ClimberDao;
+
+import org.launchcode.belaybuddy.models.User;
+import org.launchcode.belaybuddy.models.data.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,12 +22,12 @@ import java.util.ArrayList;
  */
 
 @Controller
-public class ClimberController {
+public class UserController {
 
     @Autowired
-    private ClimberDao climberDao;
+    private UserDao userDao;
 
-    public ClimberController() {}
+    public UserController() {}
 
     private ArrayList<Integer> possibleAges = new ArrayList<>();
 
@@ -36,11 +37,6 @@ public class ClimberController {
         return "/index";
     }
 
-    @RequestMapping(value = "", method = RequestMethod.POST)
-    public String processIndex(Model model) {
-        model.addAttribute("title", "Belay Buddy Login");
-        return "redirect:climbers";
-    }
 
     @RequestMapping(value = "register", method = RequestMethod.GET)
     public String displayRegisterForm(Model model) {
@@ -53,13 +49,13 @@ public class ClimberController {
 
         model.addAttribute("title", "Register");
         model.addAttribute("possibleAges", possibleAges);
-        model.addAttribute(new Climber());
+        model.addAttribute(new User());
         return "/register";
     }
 
     @RequestMapping(value = "register", method = RequestMethod.POST)
-    public String processRegisterForm(@ModelAttribute @Valid Climber newClimber,
-                                       Errors errors, @RequestParam ArrayList climbingType, Model model) {
+    public String processRegisterForm(@ModelAttribute @Valid User newUser,
+                                       Errors errors, Model model) {
 
         if (errors.hasErrors()) {
             model.addAttribute("title", "Register");
@@ -67,15 +63,14 @@ public class ClimberController {
             return "/register";
         }
 
-        newClimber.setClimbingTypes(climbingType);
-        climberDao.save(newClimber);
+        userDao.save(newUser);
         return "redirect:climbers";
     }
 
     @RequestMapping(value = "climbers", method = RequestMethod.GET)
     public String displayClimbersForm(Model model) {
         model.addAttribute("title", "Climbers");
-        model.addAttribute("climbers", climberDao.findAll());
+        model.addAttribute("users", userDao.findAll());
         return "/climbers";
     }
 }

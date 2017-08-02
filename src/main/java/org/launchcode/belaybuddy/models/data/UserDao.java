@@ -1,7 +1,7 @@
 package org.launchcode.belaybuddy.models.data;
 
-import javax.transaction.Transactional;
-import org.launchcode.belaybuddy.models.Climber;
+import javax.transaction.Transactional;;
+import org.launchcode.belaybuddy.models.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,5 +11,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @Transactional
-public interface ClimberDao extends CrudRepository<Climber, Integer> {
+public interface UserDao extends CrudRepository<User, Integer> {
 }
