@@ -6,16 +6,15 @@
 <h1 th:text="${title}">Default Title</h1>
 
 
-<div th:if="${param.error}">
-    Invalid username and password.
-</div>
-<div th:if="${param.logout}">
+
+<div th:if="${param.logout}" class="error">
     You have been logged out.
 </div>
     <form th:action="@{/}" method="post">
-        <div><label> Username : <input type="text" name="username"/> </label></div>
+        <div><label> Email : <input type="text" name="email"/> </label></div>
         <div><label> Password: <input type="password" name="password"/> </label></div>
-        <div><input type="submit" value="Sign In"/></div>
+        <div th:if="${param.error}" class="error">Invalid email address and/or password</div>
+        <div><input type="submit" value="Sign In" class="btn btn-primary"/></div>
     </form>
 <div>Not a member? <a href="/register">Register here!</a></div>
 </body>

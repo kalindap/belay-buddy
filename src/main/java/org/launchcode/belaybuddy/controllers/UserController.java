@@ -1,8 +1,9 @@
 package org.launchcode.belaybuddy.controllers;
 
 
+import org.launchcode.belaybuddy.data.UserRepository;
 import org.launchcode.belaybuddy.models.User;
-import org.launchcode.belaybuddy.models.data.UserDao;
+import org.launchcode.belaybuddy.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,7 +11,6 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 import javax.validation.Valid;
@@ -24,13 +24,19 @@ import java.util.ArrayList;
 @Controller
 public class UserController {
 
+
     @Autowired
-    private UserDao userDao;
+    private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
 
     public UserController() {}
 
+    //to display dropdown of possible ages for user to choose at registration
     private ArrayList<Integer> possibleAges = new ArrayList<>();
 
+    //login page
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String displayIndex(Model model) {
         model.addAttribute("title", "Belay Buddy Login");
@@ -56,6 +62,11 @@ public class UserController {
     @RequestMapping(value = "register", method = RequestMethod.POST)
     public String processRegisterForm(@ModelAttribute @Valid User newUser,
                                        Errors errors, Model model) {
+        User userExists = userService.findUserByEmail(newUser.getEmail());
+        if (userExists != null) {
+            errors.rejectValue("email", "error.user",
+                            "There is already a user registered with the email provided");
+        }
 
         if (errors.hasErrors()) {
             model.addAttribute("title", "Register");
@@ -63,14 +74,15 @@ public class UserController {
             return "/register";
         }
 
-        userDao.save(newUser);
+        userService.saveUser(newUser);
         return "redirect:climbers";
     }
 
+    //displays list of all users
     @RequestMapping(value = "climbers", method = RequestMethod.GET)
     public String displayClimbersForm(Model model) {
         model.addAttribute("title", "Climbers");
-        model.addAttribute("users", userDao.findAll());
+        model.addAttribute("users", userRepository.findAll());
         return "/climbers";
     }
 }
