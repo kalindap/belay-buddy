@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace="fragments :: head"></head>
+
+<body class="container">
+<h1 th:text="${title}">Default Title</h1>
+<nav th:replace="fragments :: navigation"></nav>
+
+<form method="post" style="max-width:600px;">
+    <h3>Pick the characteristics you want in a partner:</h3>
+
+    <h4>Choose an age range:</h4>
+    <div class="form-group">
+        <label>Minimum Age</label>
+        <input name="minAge" />
+        <label>Maximum Age</label>
+        <input name="maxAge" />
+        <div th:text="${error}" class="error"></div>
+    </div>
+
+    <h4>Choose a gender preference:</h4>
+    <div class="form-group">
+        <select name="gender">
+            <option value="No Preference">No Preference</option>
+            <option value="Female">Female</option>
+            <option value="Male">Male</option>
+        </select>
+    </div>
+
+    <h4>Select climbing styles you are interested in:</h4>
+    <div class="form-group">
+        <label>Outdoor:</label><br/>
+        <input type="checkbox" name="climbingTypes" value="trad"/>Trad<br/>
+        <input type="checkbox" name="climbingTypes" value="outdoorSport"/>Sport<br/>
+        <input type="checkbox" name="climbingTypes" value="outdoorBoulder"/>Bouldering<br/>
+        <label>Indoor:</label><br/>
+        <input type="checkbox" name="climbingTypes" value="indoorSport"/>Sport<br/>
+        <input type="checkbox" name="climbingTypes" value="indoorBoulder"/>Bouldering<br/>
+        <input type="hidden" name="climbingTypes" />
+    </div>
+
+    <input type="submit" value="Submit" class="btn btn-primary"/>
+</form>
+
+</body>
+</html>
