@@ -42,7 +42,7 @@ public class UserController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String displayIndex(Model model) {
         model.addAttribute("title", "Belay Buddy Login");
-        return "/index";
+        return "/user/index";
     }
 
     //register form
@@ -58,7 +58,7 @@ public class UserController {
         model.addAttribute("title", "Register");
         model.addAttribute("possibleAges", possibleAges);
         model.addAttribute(new User());
-        return "/register";
+        return "/user/register";
     }
 
     //process registration
@@ -74,7 +74,7 @@ public class UserController {
         if (errors.hasErrors()) {
             model.addAttribute("title", "Register");
             model.addAttribute("possibleAges", possibleAges);
-            return "/register";
+            return "/user/register";
         }
 
         userService.saveUser(newUser);
@@ -86,14 +86,14 @@ public class UserController {
     public String displayClimbers(Model model) {
         model.addAttribute("title", "Climbers");
         model.addAttribute("users", userRepository.findAll());
-        return "/climbers";
+        return "/user/climbers";
     }
 
     //displays form for filtering users
     @RequestMapping(value = "climbers/filter", method = RequestMethod.GET)
     public String displayFilterClimbersForm(Model model) {
         model.addAttribute("title", "Filter Climbers");
-        return "/filter";
+        return "/user/filter";
     }
 
     //displays filtered list of users
@@ -158,7 +158,7 @@ public class UserController {
             } catch (NumberFormatException ex) {
                 model.addAttribute("title", "Filter Climbers");
                 model.addAttribute("error", "Age must be entered as digits");
-                return "/filter";
+                return "/user/filter";
             }
         } else {
             intMinAge = 18;
@@ -171,7 +171,7 @@ public class UserController {
             } catch (NumberFormatException ex) {
                 model.addAttribute("title", "Filter Climbers");
                 model.addAttribute("error", "Age must be entered as digits");
-                return "/filter";
+                return "/user/filter";
             }
         } else {
             intMaxAge = 80;
@@ -185,6 +185,6 @@ public class UserController {
 
         model.addAttribute("title", "Filter Results");
         model.addAttribute("users", filteredUsers);
-        return "/climbers";
+        return "/user/climbers";
     }
 }

@@ -7,6 +7,8 @@ import javax.persistence.*;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -18,7 +20,7 @@ public class User {
     @Id
     @GeneratedValue
     @Column(name = "user_id")
-    private int id;
+    private Long id;
 
     @NotEmpty(message = "Name is a required field")
     @Size(min=1, max=15, message = "Name must be between 1 and 15 characters")
@@ -57,7 +59,11 @@ public class User {
 
     private boolean indoorBoulder = false;
 
-    public User(int id, String firstName, String lastName, String email, String password, int active, Set<Role> roles, int age, String gender, boolean trad, boolean outdoorSport, boolean outdoorBoulder, boolean indoorSport, boolean indoorBoulder) {
+    @OneToMany
+    @JoinColumn(name = "organizer_user_id")
+    private List<Meetup> meetups = new ArrayList<>();
+
+    public User(Long id, String firstName, String lastName, String email, String password, int active, Set<Role> roles, int age, String gender, boolean trad, boolean outdoorSport, boolean outdoorBoulder, boolean indoorSport, boolean indoorBoulder) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -76,7 +82,11 @@ public class User {
 
     public User() {}
 
-    public int getId() {
+    public String toString() {
+        return firstName + " " + lastName;
+    }
+
+    public Long getId() {
         return id;
     }
 
