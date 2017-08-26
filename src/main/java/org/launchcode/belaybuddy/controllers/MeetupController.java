@@ -5,6 +5,8 @@ import org.launchcode.belaybuddy.data.UserRepository;
 import org.launchcode.belaybuddy.models.Meetup;
 import org.launchcode.belaybuddy.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -56,6 +58,7 @@ public class MeetupController {
         LocalDate dateToStore;
         LocalTime timeToStore;
 
+        //check date entered in correct format
         try {
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
             dateToStore = LocalDate.parse(date, dateFormatter);
@@ -65,8 +68,8 @@ public class MeetupController {
             return "/calendar/create";
         }
 
+        //check time entered in correct format
         String stringTime = hour + ":" + minute;
-
         try {
             DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("kk:mm");
             timeToStore = LocalTime.parse(stringTime, timeFormatter);
@@ -76,11 +79,12 @@ public class MeetupController {
             return "/calendar/create";
         }
 
+        //get currently logged in user to set as organizer
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        User organizer = userRepository.findByEmail(username);
 
-        Long organizerid = Long.valueOf(1);
-        User placeholder = userRepository.getOne(organizerid);
-        newMeetup.setOrganizer(placeholder);
-
+        newMeetup.setOrganizer(organizer);
         newMeetup.setDate(dateToStore);
         newMeetup.setTime(timeToStore);
         meetupRepository.save(newMeetup);
