@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace="fragments :: head"></head>
+
+<body class="container">
+<h1 th:text="${title}">Default Title</h1>
+<nav th:replace="fragments :: navigation"></nav>
+
+<form method="post" style="max-width:600px;">
+    <h3>What kind of meetup are you looking for?</h3>
+
+    <h4>Choose a location:</h4>
+    <div class="form-group">
+        <select name="location">
+            <option value="No Preference">No Preference</option>
+            <option value="Cedar Bluff">Cedar Bluff</option>
+            <option value="Elephant Rocks State Park">Elephant Rocks State Park</option>
+            <option value="Holy Boulders">Holy Boulders</option>
+            <option value="Jackson Falls">Jackson Falls</option>
+            <option value="Pere Marquette State Park">Pere Marquette State Park</option>
+            <option value="St. Francois State Park">St. Francois State Park</option>
+            <option value="Silver Mines">Silver Mines</option>
+            <option value="Climb So Ill">Climb So Ill</option>
+            <option value="Upper Limits - Downtown">Upper Limits - Downtown</option>
+            <option value="Upper Limits - Maryland Heights">Upper Limits - Maryland Heights</option>
+            <option value="Upper Limits - Chesterfield">Upper Limits - Chesterfield</option>
+        </select>
+    </div>
+
+    <h4>Which dates are you interested in? (MM/DD/YYYY)</h4>
+    <div class="form-group">
+        <label>Start Date</label>
+        <input name="startDate" />
+        <span th:text="${startError}" class="error"></span>
+        <br/>
+        <label>End Date</label>
+        <input name="endDate" />
+        <span th:text="${endError}" class="error"></span>
+    </div>
+
+    <input type="submit" value="Submit" class="btn btn-primary"/>
+</form>
+
+</body>
+</html>

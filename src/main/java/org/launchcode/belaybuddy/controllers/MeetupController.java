@@ -20,6 +20,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 
 /**
@@ -38,8 +41,13 @@ public class MeetupController {
     //displays list of all meetups
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String index(Model model) {
+
+        //display meetups in chronological order
+        List<Meetup> allMeetups = meetupRepository.findAll();
+        allMeetups.sort(Comparator.comparing(Meetup::getDate).thenComparing(Meetup::getAmpm).thenComparing(Meetup::getTime));
+
         model.addAttribute("title", "Calendar");
-        model.addAttribute("meetups", meetupRepository.findAll());
+        model.addAttribute("meetups", allMeetups);
         return "/calendar/meetups";
     }
 
@@ -53,12 +61,11 @@ public class MeetupController {
 
     //process meetup creation
     @RequestMapping(value = "create", method = RequestMethod.POST)
-    public String processCreateForm(@ModelAttribute @Valid Meetup newMeetup, Errors errors, @RequestParam String date, @RequestParam String hour, @RequestParam String minute, Model model) {
-
-        LocalDate dateToStore;
-        LocalTime timeToStore;
+    public String processCreateForm(@ModelAttribute @Valid Meetup newMeetup, Errors errors, @RequestParam String date,
+                                    @RequestParam String hour, @RequestParam String minute, Model model) {
 
         //check date entered in correct format
+        LocalDate dateToStore;
         try {
             DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
             dateToStore = LocalDate.parse(date, dateFormatter);
@@ -69,13 +76,14 @@ public class MeetupController {
         }
 
         //check time entered in correct format
+        LocalTime timeToStore;
         String stringTime = hour + ":" + minute;
         try {
             DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("kk:mm");
             timeToStore = LocalTime.parse(stringTime, timeFormatter);
         } catch (DateTimeParseException ex) {
             model.addAttribute("title", "Create a Meetup");
-            model.addAttribute("timeError", "Time must be in the format H:MM");
+            model.addAttribute("timeError", "Time must be in the format HH:MM");
             return "/calendar/create";
         }
 
@@ -89,5 +97,65 @@ public class MeetupController {
         newMeetup.setTime(timeToStore);
         meetupRepository.save(newMeetup);
         return  "redirect:";
+    }
+
+    //displays form for filtering meetups
+    @RequestMapping(value = "filter", method = RequestMethod.GET)
+    public String filterMeetupForm(Model model) {
+        model.addAttribute("title", "Filter Meetups");
+        return "/calendar/filter";
+    }
+
+    @RequestMapping(value = "filter", method = RequestMethod.POST)
+    public String filterMeetupResults(Model model, @RequestParam String location, @RequestParam String startDate, @RequestParam String endDate) {
+
+        //get all meetups
+        List<Meetup> allMeetups = meetupRepository.findAll();
+        ArrayList<Meetup> filteredMeetups = new ArrayList<>();
+        filteredMeetups.addAll(allMeetups);
+
+        //filter meetups by location
+        if (!location.equals("No Preference")) {
+            filteredMeetups.removeIf((Meetup meetup) -> !meetup.getLocation().equals(location));
+        }
+
+        //filter meetups by start date
+        LocalDate startDateToFilter;
+        if (!startDate.equals("")) {
+            try {
+                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+                startDateToFilter = LocalDate.parse(startDate, dateFormatter);
+            } catch (DateTimeParseException ex) {
+                model.addAttribute("title", "Filter Meetups");
+                model.addAttribute("startError", "Date must be in the format MM/DD/YYYY");
+                return "/calendar/filter";
+            }
+        } else {
+            startDateToFilter = LocalDate.MIN;
+        }
+        filteredMeetups.removeIf((Meetup meetup) -> meetup.getDate().isBefore(startDateToFilter));
+
+        //filter meetups by end date
+        LocalDate endDateToFilter;
+        if (!endDate.equals("")) {
+            try {
+                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+                endDateToFilter = LocalDate.parse(endDate, dateFormatter);
+            } catch (DateTimeParseException ex) {
+                model.addAttribute("title", "Filter Meetups");
+                model.addAttribute("endError", "Date must be in the format MM/DD/YYYY");
+                return "/calendar/filter";
+            }
+        } else {
+            endDateToFilter = LocalDate.MAX;
+        }
+        filteredMeetups.removeIf((Meetup meetup) -> meetup.getDate().isAfter(endDateToFilter));
+
+        //display filtered meetups in chronological order
+        filteredMeetups.sort(Comparator.comparing(Meetup::getDate).thenComparing(Meetup::getAmpm).thenComparing(Meetup::getTime));
+
+        model.addAttribute("title", "Filter Results");
+        model.addAttribute("meetups", filteredMeetups);
+        return "/calendar/meetups";
     }
 }

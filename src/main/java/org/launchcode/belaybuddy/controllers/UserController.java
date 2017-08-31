@@ -98,15 +98,15 @@ public class UserController {
 
     //displays filtered list of users
     @RequestMapping(value = "climbers/filter", method = RequestMethod.POST)
-    public String displayFilterClimberResults(Model model, @RequestParam String minAge, @RequestParam String maxAge, @RequestParam String gender, @RequestParam List climbingTypes) {
+    public String displayFilterClimberResults(Model model, @RequestParam List climbingTypes, @RequestParam String minAge, @RequestParam String maxAge, @RequestParam String gender) {
 
-        Integer intMinAge;
-        Integer intMaxAge;
+        //get all users
         List<User> allUsers = userRepository.findAll();
+
+        //create list to filter users
         ArrayList<User> filteredUsers = new ArrayList<>();
 
-
-        //filter users by climbing type to create user list
+        //filter users by climbing type, adding user to user list if their climbing types match the criteria
         for (User user : allUsers) {
             if (climbingTypes.contains("trad")) {
                 if (user.isTrad()) {
@@ -152,6 +152,7 @@ public class UserController {
 
 
         //filter users by age, remove if they don't match criteria
+        Integer intMinAge;
         if (!minAge.equals("")) {
             try {
                 intMinAge = Integer.parseInt(minAge);
@@ -165,6 +166,7 @@ public class UserController {
         }
         filteredUsers.removeIf((User user) -> user.getAge() < intMinAge);
 
+        Integer intMaxAge;
         if (!maxAge.equals("")) {
             try {
                 intMaxAge = Integer.parseInt(maxAge);
