@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace="fragments :: head"></head>
+
+<body class="container">
+<h1 th:text="${title}">Default Title</h1>
+<nav th:replace="fragments :: navigation"></nav>
+
+<form method="post" style="max-width:600px;" th:object="${user}">
+
+    <div class="form-group">
+        <label th:for="email">Email Address</label>
+        <input class="form-control" th:field="*{email}" />
+        <span th:errors="*{email}" class="error"></span>
+    </div>
+
+
+    <div class="form-group">
+        <label th:for="firstName">First Name</label>
+        <input class="form-control" th:field="*{firstName}" />
+        <span th:errors="*{firstName}" class="error"></span>
+    </div>
+
+    <div class="form-group">
+        <label th:for="lastName">Last Name</label>
+        <input class="form-control" th:field="*{lastName}" />
+        <span th:errors="*{lastName}" class="error"></span>
+    </div>
+
+    <div class="form-group">
+        <label th:for="age">Age</label>
+        <select th:field="*{age}">
+            <option th:each="age : ${possibleAges}"
+                    th:text="${age}"
+                    th:value="${age}"></option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label th:for="gender">Gender</label>
+        <select th:field="*{gender}">
+            <option value="Female">Female</option>
+            <option value="Male">Male</option>
+            <option value="Prefer Not to Say">Prefer Not to Say</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <div>
+            <h4>Select styles of climbing you are interested in:</h4>
+            <label>Outdoor:</label>
+            <br/>
+            <span>Trad:</span>
+            <label for="yesT">Yes</label>
+            <input type="radio" th:field="*{trad}" id="yesT" th:value="true"/>
+            <label for="noT">No</label>
+            <input type="radio" th:field="*{trad}" id="noT" th:value="false" checked="checked"/>
+            <br/>
+            <span>Sport:</span>
+            <label for="yesOs">Yes</label>
+            <input type="radio" th:field="*{outdoorSport}" id="yesOs" th:value="true"/>
+            <label for="noOs">No</label>
+            <input type="radio" th:field="*{outdoorSport}" id="noOs" th:value="false" checked="checked"/>
+            <br/>
+            <span>Bouldering:</span>
+            <label for="yesOb">Yes</label>
+            <input type="radio" th:field="*{outdoorBoulder}" id="yesOb" th:value="true"/>
+            <label for="noOb">No</label>
+            <input type="radio" th:field="*{outdoorBoulder}" id="noOb" th:value="false" checked="checked"/>
+            <br/>
+            <label>Indoor:</label>
+            <br/>
+            <span>Sport:</span>
+            <label for="yesIs">Yes</label>
+            <input type="radio" th:field="*{indoorSport}" id="yesIs" th:value="true"/>
+            <label for="noIs">No</label>
+            <input type="radio" th:field="*{indoorSport}" id="noIs" th:value="false" checked="checked"/>
+            <br/>
+            <span>Bouldering:</span>
+            <label for="yesIb">Yes</label>
+            <input type="radio" th:field="*{indoorBoulder}" id="yesIb" th:value="true"/>
+            <label for="noIb">No</label>
+            <input type="radio" th:field="*{indoorBoulder}" id="noIb" th:value="false" checked="checked"/>
+
+        </div>
+    </div>
+    <input type="hidden" th:field="*{password}" />
+    <input type="submit" value="Edit" class="btn btn-primary" />
+</form>
+
+
+</body>
+</html>

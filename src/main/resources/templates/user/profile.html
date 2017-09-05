@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace="fragments :: head"></head>
+
+<body class="container">
+<h1 th:text="${title}">Default Title</h1>
+<nav th:replace="fragments :: navigation"></nav>
+
+<table class="table table-sm table-bordered"  th:object="${user}">
+
+    <tr><td class="left-column"><strong>Name: </strong></td><td th:text="${user.firstName} + ' ' + ${user.lastName}"></td></tr>
+    <tr><td class="left-column"><strong>Age: </strong></td><td th:text="${user.age}"></td></tr>
+    <tr><td class="left-column"><strong>Gender: </strong></td><td th:text="${user.gender}"></td></tr>
+    <tr><td class="left-column"><strong>Outdoor Climbing: </strong></td>
+        <td>
+            <span th:if="${user.trad == true}">Trad</span>
+            <span th:if="${user.outdoorSport == true}">Sport</span>
+            <span th:if="${user.outdoorBoulder == true}">Bouldering</span>
+        </td></tr>
+    <tr><td class="left-column"><strong>Indoor Climbing: </strong></td>
+        <td>
+            <span th:if="${user.indoorSport == true}">Sport</span>
+            <span th:if="${user.indoorBoulder == true}">Bouldering</span>
+        </td></tr>
+
+</table>
+<a href="/profile/edit" class="btn btn-primary">Edit</a>
+
+</body>
+</html>

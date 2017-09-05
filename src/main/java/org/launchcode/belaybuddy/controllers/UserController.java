@@ -5,6 +5,8 @@ import org.launchcode.belaybuddy.data.UserRepository;
 import org.launchcode.belaybuddy.models.User;
 import org.launchcode.belaybuddy.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -49,6 +51,7 @@ public class UserController {
     @RequestMapping(value = "register", method = RequestMethod.GET)
     public String displayRegisterForm(Model model) {
 
+        //create list of possible ages for dropdown
         if (possibleAges.isEmpty()) {
             for (int i = 18; i < 80; i++) {
                 possibleAges.add(i);
@@ -63,8 +66,7 @@ public class UserController {
 
     //process registration
     @RequestMapping(value = "register", method = RequestMethod.POST)
-    public String processRegisterForm(@ModelAttribute @Valid User newUser,
-                                       Errors errors, Model model) {
+    public String processRegisterForm(@ModelAttribute @Valid User newUser, Errors errors, Model model) {
         User userExists = userService.findUserByEmail(newUser.getEmail());
         if (userExists != null) {
             errors.rejectValue("email", "error.user",
@@ -81,7 +83,85 @@ public class UserController {
         return "redirect:climbers";
     }
 
-    //displays list of all users
+    //display user's profile
+    @RequestMapping(value = "profile", method = RequestMethod.GET)
+    public String displayUser(Model model) {
+
+        //get currently logged in user
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        User user = userRepository.findByEmail(username);
+
+        model.addAttribute("title", "Profile");
+        model.addAttribute("user", user);
+        return "/user/profile";
+    }
+
+    //display edit user form
+    @RequestMapping(value = "profile/edit", method = RequestMethod.GET)
+    public String displayEditUserForm(Model model) {
+
+        //get currently logged in user
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        User user = userRepository.findByEmail(username);
+
+        //create list of possible ages for dropdown
+        if (possibleAges.isEmpty()) {
+            for (int i = 18; i < 80; i++) {
+                possibleAges.add(i);
+            }
+        }
+
+        model.addAttribute("title", "Edit Profile");
+        model.addAttribute("user", user);
+        model.addAttribute("possibleAges", possibleAges);
+        return "/user/edit";
+    }
+
+    //process edit user form
+    @RequestMapping(value = "profile/edit", method=RequestMethod.POST)
+    public String processEditUserForm(@ModelAttribute @Valid User validatedUser, Errors errors, Model model) {
+
+        //get currently logged in user
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        User user = userRepository.findByEmail(username);
+
+        //if newly entered email does not match email for currently logged in user, check that new email not already in the database
+        if (!user.getEmail().equals(validatedUser.getEmail())) {
+            User userExists = userService.findUserByEmail(validatedUser.getEmail());
+            if (userExists != null) {
+                errors.rejectValue("email", "error.user",
+                        "There is already a user registered with the email provided");
+            }
+        }
+
+        //check that other fields are valid
+        if (errors.hasErrors()) {
+            model.addAttribute("title", "Edit Profile");
+            model.addAttribute("possibleAges", possibleAges);
+            return "/user/edit";
+        }
+
+        //set each field with newly entered data
+        user.setEmail(validatedUser.getEmail());
+        user.setPassword(validatedUser.getPassword());
+        user.setFirstName(validatedUser.getFirstName());
+        user.setLastName(validatedUser.getLastName());
+        user.setAge(validatedUser.getAge());
+        user.setGender(validatedUser.getGender());
+        user.setTrad(validatedUser.isTrad());
+        user.setOutdoorSport(validatedUser.isOutdoorSport());
+        user.setOutdoorBoulder(validatedUser.isOutdoorBoulder());
+        user.setIndoorSport(validatedUser.isIndoorSport());
+        user.setIndoorBoulder(validatedUser.isIndoorBoulder());
+
+        userService.saveUser(user);
+        return "redirect:";
+    }
+
+    //display list of all users
     @RequestMapping(value = "climbers", method = RequestMethod.GET)
     public String displayClimbers(Model model) {
         model.addAttribute("title", "Climbers");
@@ -89,14 +169,14 @@ public class UserController {
         return "/user/climbers";
     }
 
-    //displays form for filtering users
+    //display form for filtering users
     @RequestMapping(value = "climbers/filter", method = RequestMethod.GET)
     public String displayFilterClimbersForm(Model model) {
         model.addAttribute("title", "Filter Climbers");
         return "/user/filter";
     }
 
-    //displays filtered list of users
+    //display filtered list of users
     @RequestMapping(value = "climbers/filter", method = RequestMethod.POST)
     public String displayFilterClimberResults(Model model, @RequestParam List climbingTypes, @RequestParam String minAge, @RequestParam String maxAge, @RequestParam String gender) {
 
@@ -189,4 +269,5 @@ public class UserController {
         model.addAttribute("users", filteredUsers);
         return "/user/climbers";
     }
+
 }
