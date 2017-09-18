@@ -128,16 +128,7 @@ public class UserController {
         String username = auth.getName();
         User user = userRepository.findByEmail(username);
 
-        //if newly entered email does not match email for currently logged in user, check that new email not already in the database
-        if (!user.getEmail().equals(validatedUser.getEmail())) {
-            User userExists = userService.findUserByEmail(validatedUser.getEmail());
-            if (userExists != null) {
-                errors.rejectValue("email", "error.user",
-                        "There is already a user registered with the email provided");
-            }
-        }
-
-        //check that other fields are valid
+        //check that fields are valid, if not reload page
         if (errors.hasErrors()) {
             model.addAttribute("title", "Edit Profile");
             model.addAttribute("possibleAges", possibleAges);
@@ -145,8 +136,6 @@ public class UserController {
         }
 
         //set each field with newly entered data
-        user.setEmail(validatedUser.getEmail());
-        user.setPassword(validatedUser.getPassword());
         user.setFirstName(validatedUser.getFirstName());
         user.setLastName(validatedUser.getLastName());
         user.setAge(validatedUser.getAge());
@@ -157,7 +146,7 @@ public class UserController {
         user.setIndoorSport(validatedUser.isIndoorSport());
         user.setIndoorBoulder(validatedUser.isIndoorBoulder());
 
-        userService.saveUser(user);
+        userRepository.save(user);
         return "redirect:";
     }
 
@@ -186,7 +175,7 @@ public class UserController {
         //create list to filter users
         ArrayList<User> filteredUsers = new ArrayList<>();
 
-        //filter users by climbing type, adding user to user list if their climbing types match the criteria
+        //filter users by climbing type, adding user to filtered user list if their climbing types match the filtering criteria
         for (User user : allUsers) {
             if (climbingTypes.contains("trad")) {
                 if (user.isTrad()) {

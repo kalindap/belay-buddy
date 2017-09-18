@@ -51,7 +51,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                     .antMatchers("/", "/register").permitAll()
-                    .antMatchers("/climbers").hasAuthority("USER").anyRequest()
+                    .antMatchers().hasAuthority("USER").anyRequest()
                     .authenticated().and().csrf().disable().formLogin()
                     .loginPage("/").failureUrl("/?error=true")
                     .defaultSuccessUrl("/climbers")
@@ -59,8 +59,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .passwordParameter("password")
                     .and().logout()
                     .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                    .logoutSuccessUrl("/?logout=true").and().exceptionHandling()
-                    .accessDeniedPage("/access-denied");
+                    .logoutSuccessUrl("/?logout=true").and().exceptionHandling();
+
     }
 
 
