@@ -10,10 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -106,6 +103,7 @@ public class MeetupController {
         return "/calendar/filter";
     }
 
+    //displays filtered meetup results
     @RequestMapping(value = "filter", method = RequestMethod.POST)
     public String filterMeetupResults(Model model, @RequestParam String location, @RequestParam String startDate, @RequestParam String endDate) {
 
@@ -157,5 +155,32 @@ public class MeetupController {
         model.addAttribute("title", "Filter Results");
         model.addAttribute("meetups", filteredMeetups);
         return "/calendar/meetups";
+    }
+
+    //allows user to sign up for a meetup
+    @RequestMapping(value = "addme/{meetupId}", method = RequestMethod.GET)
+    public String addAttendee(Model model, @PathVariable Long meetupId) {
+
+        //get currently logged in user to set as attendee
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        User attendee = userRepository.findByEmail(username);
+
+        //find meetup user wants to sign up for
+        Meetup meetup = meetupRepository.findOne(meetupId);
+
+        //find list of current attendees for that meetup
+        List<User> currentAttendees = meetup.getAttendees();
+
+        //if user already attending, reload page
+        if (currentAttendees.contains(attendee)) {
+            return "redirect:/calendar";
+        }
+
+        //else add user to meetup
+        currentAttendees.add(attendee);
+        meetup.setAttendees(currentAttendees);
+        meetupRepository.save(meetup);
+        return "redirect:/calendar";
     }
 }

@@ -61,9 +61,14 @@ public class User {
 
     @OneToMany
     @JoinColumn(name = "organizer_user_id")
-    private List<Meetup> meetups = new ArrayList<>();
+    private List<Meetup> meetupsOrganized = new ArrayList<>();
 
-    public User(Long id, String firstName, String lastName, String email, String password, int active, Set<Role> roles, int age, String gender, boolean trad, boolean outdoorSport, boolean outdoorBoulder, boolean indoorSport, boolean indoorBoulder) {
+    @ManyToMany(mappedBy = "attendees")
+    private List<Meetup> meetupsAttending = new ArrayList<>();
+
+    public User(Long id, String firstName, String lastName, String email, String password, int active, Set<Role> roles,
+                int age, String gender, boolean trad, boolean outdoorSport, boolean outdoorBoulder, boolean indoorSport,
+                boolean indoorBoulder) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -192,5 +197,13 @@ public class User {
 
     public void setIndoorBoulder(boolean indoorBoulder) {
         this.indoorBoulder = indoorBoulder;
+    }
+
+    public List<Meetup> getMeetupsAttending() {
+        return meetupsAttending;
+    }
+
+    public void setMeetupsAttending(List<Meetup> meetupsAttending) {
+        this.meetupsAttending = meetupsAttending;
     }
 }

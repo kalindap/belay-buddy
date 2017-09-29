@@ -5,7 +5,9 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by kalindapiper on 8/16/17.
@@ -29,6 +31,10 @@ public class Meetup {
 
     @ManyToOne
     private User organizer;
+
+    @ManyToMany
+    @JoinTable(name = "user_meetups_attending", joinColumns = @JoinColumn(name = "meetup_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private List<User> attendees = new ArrayList<>();
 
     private String description;
 
@@ -82,6 +88,14 @@ public class Meetup {
 
     public void setOrganizer(User organizer) {
         this.organizer = organizer;
+    }
+
+    public List<User> getAttendees() {
+        return attendees;
+    }
+
+    public void setAttendees(List<User> attendees) {
+        this.attendees = attendees;
     }
 
     public String getDescription() {
