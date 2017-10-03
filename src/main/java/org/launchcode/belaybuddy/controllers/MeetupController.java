@@ -39,8 +39,13 @@ public class MeetupController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String index(Model model) {
 
-        //display meetups in chronological order
+        //get list of all meetups
         List<Meetup> allMeetups = meetupRepository.findAll();
+
+        //remove meetups in the past
+        allMeetups.removeIf((Meetup meetup) -> meetup.getDate().isBefore(LocalDate.now()));
+
+        //sort meetups chronologically
         allMeetups.sort(Comparator.comparing(Meetup::getDate).thenComparing(Meetup::getAmpm).thenComparing(Meetup::getTime));
 
         model.addAttribute("title", "Calendar");
@@ -69,6 +74,13 @@ public class MeetupController {
         } catch (DateTimeParseException ex) {
             model.addAttribute("title", "Create a Meetup");
             model.addAttribute("dateError", "Date must be in the format MM/DD/YYYY");
+            return "/calendar/create";
+        }
+
+        //check that date has not already passed
+        if (dateToStore.isBefore(LocalDate.now())) {
+            model.addAttribute("title", "Create a Meetup");
+            model.addAttribute("dateError", "Date must be in the future");
             return "/calendar/create";
         }
 
