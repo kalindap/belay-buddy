@@ -5,3 +5,7 @@
 .error {
     color: red;
 }
+
+.button-wrapper {
+    padding-bottom: 5px;
+}

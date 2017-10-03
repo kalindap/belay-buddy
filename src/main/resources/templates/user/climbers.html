@@ -6,6 +6,9 @@
 <h1 th:text="${title}">Default Title</h1>
 <nav th:replace="fragments :: navigation"></nav>
 
+<div class="button-wrapper">
+    <a href="/climbers/filter" class="btn btn-primary btn-block">Filter Climbers</a>
+</div>
 
 <table class="table table-sm table-bordered"  th:each="user : ${users}">
 
@@ -25,9 +28,6 @@
         </td></tr>
 
 </table>
-
-
-<a href="/climbers/filter" class="btn btn-primary">Filter</a>
 
 
 </body>

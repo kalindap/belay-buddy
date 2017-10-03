@@ -6,6 +6,10 @@
 <h1 th:text="${title}">Default Title</h1>
 <nav th:replace="fragments :: navigation"></nav>
 
+<div class="button-wrapper">
+    <a href="/calendar/filter" class="btn btn-primary btn-block">Filter Meetups</a>
+</div>
+
 <table class="table table-sm table-bordered"  th:each="meetup : ${meetups}">
 
     <tr><td class="left-column"><strong>Location: </strong></td><td th:text="${meetup.location}"></td></tr>
@@ -13,11 +17,10 @@
     <tr><td class="left-column"><strong>Time: </strong></td><td th:text="${meetup.time} + ' ' + ${meetup.ampm}"></td></tr>
     <tr><td class="left-column"><strong>Description: </strong></td><td th:text="${meetup.description}"></td></tr>
     <tr><td class="left-column"><strong>Organizer: </strong></td><td th:text="${meetup.organizer}"></td></tr>
+    <tr><td class="left-column"><strong>Attending: </strong></td><td><span th:each="attendee : ${meetup.attendees}"><span th:text="${attendee} + ' '"></span></span></td></tr>
+    <tr><td colspan="2"><a th:href="'/calendar/addme/' + ${meetup.id}">Sign Me Up!</a></td></tr>
 
 </table>
-
-
-<a href="/calendar/filter" class="btn btn-primary">Filter</a>
 
 </body>
 </html>
