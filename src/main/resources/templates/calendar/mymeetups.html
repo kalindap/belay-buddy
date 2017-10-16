@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace="fragments :: head"></head>
+
+<body class="container">
+<h1 th:text="${title}">Default Title</h1>
+<nav th:replace="fragments :: navigation"></nav>
+
+<h2>Meetups I've Organized</h2>
+<table class="table table-sm table-bordered"  th:each="meetup : ${meetupsOrganized}">
+    <tr><td class="left-column"><strong>Location: </strong></td><td th:text="${meetup.location}"></td></tr>
+    <tr><td class="left-column"><strong>Date: </strong></td><td th:text="${meetup.date.getMonthValue()} + '/' + ${meetup.date.getDayOfMonth()} + '/' + ${meetup.date.getYear()}"></td></tr>
+    <tr><td class="left-column"><strong>Time: </strong></td><td th:text="${meetup.time} + ' ' + ${meetup.ampm}"></td></tr>
+    <tr><td class="left-column"><strong>Description: </strong></td><td th:text="${meetup.description}"></td></tr>
+    <tr><td class="left-column"><strong>Organizer: </strong></td><td th:text="${meetup.organizer}"></td></tr>
+    <tr><td class="left-column"><strong>Attending: </strong></td><td><span th:each="attendee : ${meetup.attendees}"><span th:text="${attendee} + ' '"></span></span></td></tr>
+</table>
+
+<h2>Meetups I'm Attending</h2>
+<table class="table table-sm table-bordered"  th:each="meetup : ${meetupsAttending}">
+    <tr><td class="left-column"><strong>Location: </strong></td><td th:text="${meetup.location}"></td></tr>
+    <tr><td class="left-column"><strong>Date: </strong></td><td th:text="${meetup.date.getMonthValue()} + '/' + ${meetup.date.getDayOfMonth()} + '/' + ${meetup.date.getYear()}"></td></tr>
+    <tr><td class="left-column"><strong>Time: </strong></td><td th:text="${meetup.time} + ' ' + ${meetup.ampm}"></td></tr>
+    <tr><td class="left-column"><strong>Description: </strong></td><td th:text="${meetup.description}"></td></tr>
+    <tr><td class="left-column"><strong>Organizer: </strong></td><td th:text="${meetup.organizer}"></td></tr>
+    <tr><td class="left-column"><strong>Attending: </strong></td><td><span th:each="attendee : ${meetup.attendees}"><span th:text="${attendee} + ' '"></span></span></td></tr>
+</table>
+
+</body>
+</html>

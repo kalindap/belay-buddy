@@ -199,6 +199,14 @@ public class User {
         this.indoorBoulder = indoorBoulder;
     }
 
+    public List<Meetup> getMeetupsOrganized() {
+        return meetupsOrganized;
+    }
+
+    public void setMeetupsOrganized(List<Meetup> meetupsOrganized) {
+        this.meetupsOrganized = meetupsOrganized;
+    }
+
     public List<Meetup> getMeetupsAttending() {
         return meetupsAttending;
     }

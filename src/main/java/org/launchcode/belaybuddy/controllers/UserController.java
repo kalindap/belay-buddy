@@ -128,7 +128,7 @@ public class UserController {
         String username = auth.getName();
         User user = userRepository.findByEmail(username);
 
-        //check that fields are valid, if not reload page
+        //check that newly entered fields are valid, if not reload page
         if (errors.hasErrors()) {
             model.addAttribute("title", "Edit Profile");
             model.addAttribute("possibleAges", possibleAges);
@@ -258,5 +258,4 @@ public class UserController {
         model.addAttribute("users", filteredUsers);
         return "/user/climbers";
     }
-
 }

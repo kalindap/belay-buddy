@@ -80,7 +80,7 @@ public class MeetupController {
         //check that date has not already passed
         if (dateToStore.isBefore(LocalDate.now())) {
             model.addAttribute("title", "Create a Meetup");
-            model.addAttribute("dateError", "Date must be in the future");
+            model.addAttribute("dateError", "New meetups must have a future date");
             return "/calendar/create";
         }
 
@@ -181,11 +181,14 @@ public class MeetupController {
         //find meetup user wants to sign up for
         Meetup meetup = meetupRepository.findOne(meetupId);
 
+        //find organizer for that meetup
+        User organizer = meetup.getOrganizer();
+
         //find list of current attendees for that meetup
         List<User> currentAttendees = meetup.getAttendees();
 
-        //if user already attending, reload page
-        if (currentAttendees.contains(attendee)) {
+        //if user is the organizer or already attending, reload page
+        if (attendee.equals(organizer) || currentAttendees.contains(attendee)) {
             return "redirect:/calendar";
         }
 
@@ -194,5 +197,30 @@ public class MeetupController {
         meetup.setAttendees(currentAttendees);
         meetupRepository.save(meetup);
         return "redirect:/calendar";
+    }
+
+    //display user's meetups
+    @RequestMapping(value="mymeetups", method = RequestMethod.GET)
+    public String displayUsersMeetups(Model model) {
+
+        //get currently logged in user
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        User currentUser = userRepository.findByEmail(username);
+
+        //get list of all meetups organized by user, remove meetups that already occurred, then sort by date and time
+        List<Meetup> organized = currentUser.getMeetupsOrganized();
+        organized.removeIf((Meetup meetup) -> meetup.getDate().isBefore(LocalDate.now()));
+        organized.sort(Comparator.comparing(Meetup::getDate).thenComparing(Meetup::getAmpm).thenComparing(Meetup::getTime));
+
+        //get list of all meetups attended by user, remove meetups that already occurred, then sort by date and time
+        List<Meetup> attending = currentUser.getMeetupsAttending();
+        attending.removeIf((Meetup meetup) -> meetup.getDate().isBefore(LocalDate.now()));
+        attending.sort(Comparator.comparing(Meetup::getDate).thenComparing(Meetup::getAmpm).thenComparing(Meetup::getTime));
+
+        model.addAttribute("title", "My Meetups");
+        model.addAttribute("meetupsOrganized", organized);
+        model.addAttribute("meetupsAttending", attending);
+        return "/calendar/mymeetups";
     }
 }
