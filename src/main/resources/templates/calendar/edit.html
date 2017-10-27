@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace="fragments :: head"></head>
+
+<body class="container">
+<h1 th:text="${title}">Default Title</h1>
+<nav th:replace="fragments :: navigation"></nav>
+
+<form method="post" style="max-width:600px;" th:object="${meetup}">
+
+    <div class="form-group">
+        <label th:for="date">Date (MM/DD/YYYY)</label>
+        <input th:value="${meetup.date.getMonthValue()} + '/' + ${meetup.date.getDayOfMonth()} + '/' + ${meetup.date.getYear()}" class="form-control" name="date" />
+        <span th:text="${dateError}" class="error"></span>
+    </div>
+
+    <div class="form-group">
+        <label th:for="time">Time</label>
+        <select name="hour">
+            <option th:selected="${meetup.time.getHour()} == 01" value="01">1</option>
+            <option th:selected="${meetup.time.getHour()} == 02" value="02">2</option>
+            <option th:selected="${meetup.time.getHour()} == 03" value="03">3</option>
+            <option th:selected="${meetup.time.getHour()} == 04" value="04">4</option>
+            <option th:selected="${meetup.time.getHour()} == 05" value="05">5</option>
+            <option th:selected="${meetup.time.getHour()} == 06" value="06">6</option>
+            <option th:selected="${meetup.time.getHour()} == 07" value="07">7</option>
+            <option th:selected="${meetup.time.getHour()} == 08" value="08">8</option>
+            <option th:selected="${meetup.time.getHour()} == 09" value="09">9</option>
+            <option th:selected="${meetup.time.getHour()} == 10" value="10">10</option>
+            <option th:selected="${meetup.time.getHour()} == 11" value="11">11</option>
+            <option th:selected="${meetup.time.getHour()} == 12" value="12">12</option>
+        </select>
+        :
+        <select name="minute">
+            <option th:selected="${meetup.time.getMinute()} == 00" value="00">00</option>
+            <option th:selected="${meetup.time.getMinute()} == 15" value="15">15</option>
+            <option th:selected="${meetup.time.getMinute()} == 30" value="30">30</option>
+            <option th:selected="${meetup.time.getMinute()} == 45" value="45">45</option>
+        </select>
+        <select th:field="*{ampm}">
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>
+        </select>
+        <span th:text="${timeError}" class="error"></span>
+    </div>
+
+    <div class="form-group">
+        <label th:for="location">Location</label>
+        <select th:field="*{location}">
+            <option value="Cedar Bluff">Cedar Bluff</option>
+            <option value="Elephant Rocks State Park">Elephant Rocks State Park</option>
+            <option value="Holy Boulders">Holy Boulders</option>
+            <option value="Jackson Falls">Jackson Falls</option>
+            <option value="Pere Marquette State Park">Pere Marquette State Park</option>
+            <option value="St. Francois State Park">St. Francois State Park</option>
+            <option value="Silver Mines">Silver Mines</option>
+            <option value="Climb So Ill">Climb So Ill</option>
+            <option value="Upper Limits - Downtown">Upper Limits - Downtown</option>
+            <option value="Upper Limits - Maryland Heights">Upper Limits - Maryland Heights</option>
+            <option value="Upper Limits - Chesterfield">Upper Limits - Chesterfield</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label th:for="description">Description</label>
+        <input class="form-control" th:field="*{description}" />
+        <span th:errors="*{description}" class="error"></span>
+    </div>
+
+    <input type="submit" value="Edit Meetup" class="btn btn-primary" />
+
+</form>
+
+</body>
+</html>

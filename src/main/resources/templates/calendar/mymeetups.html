@@ -14,6 +14,7 @@
     <tr><td class="left-column"><strong>Description: </strong></td><td th:text="${meetup.description}"></td></tr>
     <tr><td class="left-column"><strong>Organizer: </strong></td><td th:text="${meetup.organizer}"></td></tr>
     <tr><td class="left-column"><strong>Attending: </strong></td><td><span th:each="attendee : ${meetup.attendees}"><span th:text="${attendee} + ' '"></span></span></td></tr>
+    <tr><td colspan="2"><a th:href="'/calendar/mymeetups/edit/' + ${meetup.id}">Edit Meetup</a></td></tr>
 </table>
 
 <h2>Meetups I'm Attending</h2>
@@ -24,6 +25,7 @@
     <tr><td class="left-column"><strong>Description: </strong></td><td th:text="${meetup.description}"></td></tr>
     <tr><td class="left-column"><strong>Organizer: </strong></td><td th:text="${meetup.organizer}"></td></tr>
     <tr><td class="left-column"><strong>Attending: </strong></td><td><span th:each="attendee : ${meetup.attendees}"><span th:text="${attendee} + ' '"></span></span></td></tr>
+    <tr><td colspan="2"><a th:href="'/calendar/mymeetups/removeme/' + ${meetup.id}">Remove Me</a></td></tr>
 </table>
 
 </body>

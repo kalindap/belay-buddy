@@ -38,9 +38,9 @@ public class Meetup {
 
     private String description;
 
-    public Meetup(String ampm, String location, String description) {
-        this.ampm = ampm;
+    public Meetup(String location, String ampm, String description) {
         this.location = location;
+        this.ampm = ampm;
         this.description = description;
     }
 

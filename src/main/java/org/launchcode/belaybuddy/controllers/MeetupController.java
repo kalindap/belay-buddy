@@ -169,7 +169,7 @@ public class MeetupController {
         return "/calendar/meetups";
     }
 
-    //allows user to sign up for a meetup
+    //allows a user to sign up for a meetup
     @RequestMapping(value = "addme/{meetupId}", method = RequestMethod.GET)
     public String addAttendee(Model model, @PathVariable Long meetupId) {
 
@@ -200,7 +200,7 @@ public class MeetupController {
     }
 
     //display user's meetups
-    @RequestMapping(value="mymeetups", method = RequestMethod.GET)
+    @RequestMapping(value = "mymeetups", method = RequestMethod.GET)
     public String displayUsersMeetups(Model model) {
 
         //get currently logged in user
@@ -222,5 +222,104 @@ public class MeetupController {
         model.addAttribute("meetupsOrganized", organized);
         model.addAttribute("meetupsAttending", attending);
         return "/calendar/mymeetups";
+    }
+
+    //allow a user to remove themselves from attending a meetup
+    @RequestMapping(value = "mymeetups/removeme/{meetupId}", method = RequestMethod.GET)
+    public String removeAttendee(Model model, @PathVariable Long meetupId) {
+
+        //get currently logged in user to set as attendee
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        User attendee = userRepository.findByEmail(username);
+
+        //find meetup user wants to be removed from
+        Meetup meetup = meetupRepository.findOne(meetupId);
+
+        //find list of current attendees for that meetup
+        List<User> currentAttendees = meetup.getAttendees();
+
+        //remove user from meetup
+        currentAttendees.remove(attendee);
+        meetup.setAttendees(currentAttendees);
+        meetupRepository.save(meetup);
+        return "redirect:/calendar/mymeetups";
+
+    }
+
+    //displays form for a user to edit a meetup they organized
+    @RequestMapping(value = "mymeetups/edit/{meetupId}", method = RequestMethod.GET)
+    public String displayEditMeetupForm(Model model, @PathVariable Long meetupId) {
+
+        //get currently logged in user
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        User currentUser = userRepository.findByEmail(username);
+
+        //find meetup user wants to edit
+        Meetup meetup = meetupRepository.findOne(meetupId);
+
+        //find organizer for that meetup
+        User organizer = meetup.getOrganizer();
+
+        //if user is not the organizer, reload page
+        if (!currentUser.equals(organizer)) {
+            return "redirect:/calendar/mymeetups";
+        }
+        model.addAttribute("title", "Edit Meetup");
+        model.addAttribute("meetup", meetup);
+        return "/calendar/edit";
+    }
+
+    //processes form to edit a user's meetup
+    @RequestMapping(value = "mymeetups/edit/{meetupId}", method = RequestMethod.POST)
+    public String processEditMeetupForm(@ModelAttribute @Valid Meetup validatedMeetup, Errors errors, @RequestParam String date,
+                                        @RequestParam String hour, @RequestParam String minute, @PathVariable Long meetupId, Model model) {
+
+        //find meetup user wants to edit
+        Meetup meetup = meetupRepository.findOne(meetupId);
+
+        //check date entered in correct format
+        LocalDate dateToStore;
+        try {
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+            dateToStore = LocalDate.parse(date, dateFormatter);
+        } catch (DateTimeParseException ex) {
+            model.addAttribute("title", "Edit Meetup");
+            model.addAttribute("dateError", "Date must be in the format MM/DD/YYYY");
+            model.addAttribute("meetup", meetup);
+            return "/calendar/edit";
+        }
+
+        //check that date has not already passed
+        if (dateToStore.isBefore(LocalDate.now())) {
+            model.addAttribute("title", "Edit Meetup");
+            model.addAttribute("dateError", "New meetups must have a future date");
+            model.addAttribute("meetup", meetup);
+            return "/calendar/edit";
+        }
+
+        //check time entered in correct format
+        LocalTime timeToStore;
+        String stringTime = hour + ":" + minute;
+        try {
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("kk:mm");
+            timeToStore = LocalTime.parse(stringTime, timeFormatter);
+        } catch (DateTimeParseException ex) {
+            model.addAttribute("title", "Edit Meetup");
+            model.addAttribute("timeError", "Time must be in the format HH:MM");
+            model.addAttribute("meetup", meetup);
+            return "/calendar/edit";
+        }
+
+        meetup.setLocation(validatedMeetup.getLocation());
+        meetup.setDate(dateToStore);
+        meetup.setTime(timeToStore);
+        meetup.setAmpm(validatedMeetup.getAmpm());
+        meetup.setDescription(validatedMeetup.getDescription());
+
+        meetupRepository.save(meetup);
+
+        return "redirect:/calendar/mymeetups";
     }
 }
