@@ -7,6 +7,8 @@
 <nav th:replace="fragments :: navigation"></nav>
 
 <h2>Meetups I've Organized</h2>
+<span th:unless="${meetupsOrganized} and ${meetupsOrganized.size()}"><h5>You haven't organized any meetups yet!</h5>
+    <h5><a href="/calendar/create" class="btn btn-primary">Create your own meetups!</a></h5></span>
 <table class="table table-sm table-bordered"  th:each="meetup : ${meetupsOrganized}">
     <tr><td class="left-column"><strong>Location: </strong></td><td th:text="${meetup.location}"></td></tr>
     <tr><td class="left-column"><strong>Date: </strong></td><td th:text="${meetup.date.getMonthValue()} + '/' + ${meetup.date.getDayOfMonth()} + '/' + ${meetup.date.getYear()}"></td></tr>
@@ -18,6 +20,8 @@
 </table>
 
 <h2>Meetups I'm Attending</h2>
+<span th:unless="${meetupsAttending} and ${meetupsAttending.size()}"><h5>You aren't attending any meetups yet!</h5>
+    <h5><a href="/calendar" class="btn btn-primary">Sign up for meetups!</a></h5></span>
 <table class="table table-sm table-bordered"  th:each="meetup : ${meetupsAttending}">
     <tr><td class="left-column"><strong>Location: </strong></td><td th:text="${meetup.location}"></td></tr>
     <tr><td class="left-column"><strong>Date: </strong></td><td th:text="${meetup.date.getMonthValue()} + '/' + ${meetup.date.getDayOfMonth()} + '/' + ${meetup.date.getYear()}"></td></tr>

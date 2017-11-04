@@ -322,4 +322,28 @@ public class MeetupController {
 
         return "redirect:/calendar/mymeetups";
     }
+
+    //processes delete meetup request
+    @RequestMapping(value = "mymeetups/delete/{meetupId}", method = RequestMethod.GET)
+    public String deleteMeetup(Model model, @PathVariable Long meetupId) {
+
+        //get currently logged in user
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        User currentUser = userRepository.findByEmail(username);
+
+        //find meetup user wants to delete
+        Meetup meetup = meetupRepository.findOne(meetupId);
+
+        //find organizer for that meetup
+        User organizer = meetup.getOrganizer();
+
+        //if user is not the organizer, reload page
+        if (!currentUser.equals(organizer)) {
+            return "redirect:/calendar/mymeetups";
+        }
+
+        meetupRepository.delete(meetupId);
+        return "redirect:/calendar/mymeetups";
+    }
 }

@@ -67,7 +67,7 @@
         <span th:errors="*{description}" class="error"></span>
     </div>
 
-    <input type="submit" value="Edit Meetup" class="btn btn-primary" />
+    <input type="submit" value="Save Changes" class="btn btn-primary" /> or <a th:href="'/calendar/mymeetups/delete/' + ${meetup.getId()}" class="btn btn-primary btn-warning">Delete Meetup</a>
 
 </form>
 
