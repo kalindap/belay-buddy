@@ -121,6 +121,11 @@ public class MeetupController {
 
         //get all meetups
         List<Meetup> allMeetups = meetupRepository.findAll();
+
+        //remove meetups in the past
+        allMeetups.removeIf((Meetup meetup) -> meetup.getDate().isBefore(LocalDate.now()));
+
+        //create new list to display filtered results
         ArrayList<Meetup> filteredMeetups = new ArrayList<>();
         filteredMeetups.addAll(allMeetups);
 
