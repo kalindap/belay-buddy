@@ -10,6 +10,8 @@
     <a href="/calendar/filter" class="btn btn-primary btn-block">Filter Meetups</a>
 </div>
 
+<h3 id="filterMsg" th:unless="${meetups} and ${meetups.size()}">There are no meetups that match your filters.</h3>
+
 <table class="table table-sm table-bordered"  th:each="meetup : ${meetups}">
 
     <tr><td class="left-column"><strong>Location: </strong></td><td th:text="${meetup.location}"></td></tr>

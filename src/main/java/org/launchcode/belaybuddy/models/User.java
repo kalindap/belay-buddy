@@ -38,12 +38,6 @@ public class User {
     @Size(min=5, message = "Password must have at least 5 characters")
     private String password;
 
-    private int active;
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles;
-
     @Digits(integer=2, fraction=0)
     private int age;
 
@@ -58,6 +52,12 @@ public class User {
     private boolean indoorSport = false;
 
     private boolean indoorBoulder = false;
+
+    private int active;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles;
 
     @OneToMany
     @JoinColumn(name = "organizer_user_id")

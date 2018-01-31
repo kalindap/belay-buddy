@@ -10,6 +10,8 @@
     <a href="/climbers/filter" class="btn btn-primary btn-block">Filter Climbers</a>
 </div>
 
+<h3 id="filterMsg" th:unless="${users} and ${users.size()}">There are no climbers that match your filters.</h3>
+
 <table class="table table-sm table-bordered"  th:each="user : ${users}">
 
     <tr><td class="left-column"><strong>Name: </strong></td><td th:text="${user.firstName} + ' ' + ${user.lastName}"></td></tr>
